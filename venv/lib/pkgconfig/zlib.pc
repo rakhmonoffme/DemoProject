@@ -1,0 +1,13 @@
+prefix=/Users/user/ML_course/4th_month/wrapped/venv
+exec_prefix=/Users/user/ML_course/4th_month/wrapped/venv
+libdir=/Users/user/ML_course/4th_month/wrapped/venv/lib
+sharedlibdir=/Users/user/ML_course/4th_month/wrapped/venv/lib
+includedir=/Users/user/ML_course/4th_month/wrapped/venv/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
