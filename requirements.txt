@@ -5,6 +5,6 @@ scikit-learn
 matplotlib
 seaborn
 dill
-pickle
+gunicorn
 flask
 -e.
