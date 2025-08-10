@@ -8,8 +8,8 @@ warnings.filterwarnings("ignore")
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 
-from src.components.logger import setup_logger
-from src.components.exception import CustomException
+from src.logger import setup_logger
+from src.exception import CustomException
 from src.components.data_transformation import DataTransformationConfig, DataTransformation
 from src.components.model_trainer import ModelTrainerConfig, ModelTrainer
 

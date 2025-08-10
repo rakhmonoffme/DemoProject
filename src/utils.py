@@ -5,8 +5,8 @@ import pandas as pd
 import numpy as np
 import pickle
 
-from src.components.exception import CustomException
-from src.components.logger import setup_logger
+from src.exception import CustomException
+from src.logger import setup_logger
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
 

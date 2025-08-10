@@ -8,9 +8,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from dataclasses import dataclass
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from src.components.exception import CustomException
-from src.components.logger import setup_logger
-from src.components.utils import save_object
+from src.exception import CustomException
+from src.logger import setup_logger
+from src.utils import save_object
 
 @dataclass
 class DataTransformationConfig:

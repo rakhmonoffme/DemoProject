@@ -12,9 +12,9 @@ from xgboost import XGBClassifier
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 from src.components.data_transformation import DataTransformation, DataTransformationConfig
-from src.components.utils import evaluate_model, save_object
-from src.components.exception import CustomException
-from src.components.logger import setup_logger
+from src.utils import evaluate_model, save_object
+from src.exception import CustomException
+from src.logger import setup_logger
 
 
 @dataclass
@@ -40,7 +40,7 @@ class ModelTrainer:
                 "Support Vector Machine": SVC(),
                 "Decision Tree": DecisionTreeClassifier(),
                 "K-Nearest Neighbors": KNeighborsClassifier(),
-                "XGBoost": XGBClassifier(use_label_encoder=False, eval_metric='logloss')
+                "XGBoost": XGBClassifier( eval_metric='logloss')
             }
             
             params = {
@@ -104,6 +104,7 @@ class ModelTrainer:
                 self.logger.info(f"Model saved at: {self.config.trained_model_path}")
             else:
                 self.logger.info("Model accuracy below threshold. Model not saved.")
+            return accuracy_score(y_test, best_model.predict(x_test)), best_model_name
 
         except Exception as e:
             raise CustomException(e, sys)
