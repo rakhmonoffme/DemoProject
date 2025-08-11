@@ -250,13 +250,13 @@ function App() {
     try {
       // Create URLSearchParams body as per your AI model API
       const requestBody = {
-      time_alone: Number(n.time_alone),
-      stage_fear: Number(n.stage_fear),
-      social_events: Number(n.social_events),
-      going_outside: Number(n.going_outside),
-      post_frequency: Number(n.post_frequency),
-      friends_circle: Number(n.friends_circle),
-      drained_after_socializing: n.drained_after_socializing.toLowerCase() === "yes" ? 1.0 : 0.0,
+      time_alone: Number(formData.time_alone),
+      stage_fear: Number(formData.stage_fear),
+      social_events: Number(formData.social_events),
+      going_outside: Number(formData.going_outside),
+      post_frequency: Number(formData.post_frequency),
+      friends_circle: Number(formData.friends_circle),
+      drained_after_socializing: formData.drained_after_socializing.toLowerCase() === "yes" ? 1.0 : 0.0,
     };
 
       // API call to your AI model backend
