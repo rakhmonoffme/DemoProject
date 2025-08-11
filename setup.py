@@ -16,10 +16,10 @@ def get_requirements(file_path:str)->List[str]:
 
 setup(
 
-    name='AI 1-A Project',
+    name='Personality_Prediction',
     version='0.1.0',
-    author='AI 1- Group',
-    author_email='ai@gmail.com',
+    author='Boburjon Rakhmonoc',
+    author_email='rakhmonovbb@gmail.com',
     packages=find_packages(),
     install_requires=get_requirements('requirements.txt')
 )

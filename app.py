@@ -37,7 +37,7 @@ def predict_datapoint():
                 Going_outside=float(request.form.get('going_outside')),
                 Drained_after_socializing=1.0 if request.form.get('drained_after_socializing') == 'Yes' else 0.0,
                 Friends_circle_size=float(request.form.get('friends_circle')),
-                Post_frequency=float(request.form.get('post_frequency'))  # Fixed field names
+                Post_frequency=int(request.form.get('post_frequency'))  # Fixed field names
             )
             logger.info("Data received from form: %s", data)
             
@@ -59,6 +59,6 @@ def predict_datapoint():
 
 if __name__ == "__main__":  # Fixed the syntax error
     print("Starting Flask app...")
-    print("Navigate to: http://localhost:8080/predictdata")
-    Timer(1, lambda: webbrowser.open("http://localhost:8080/predictdata")).start()
+    print("Navigate to: http://localhost:8080/predict")
+    Timer(1, lambda: webbrowser.open("http://localhost:8080/predict")).start()
     app.run(host="0.0.0.0", port=8080, debug=True)

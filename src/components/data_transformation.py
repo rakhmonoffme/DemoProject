@@ -40,6 +40,7 @@ class DataTransformation:
             # Identify categorical and numerical columns
             cat_cols = x.select_dtypes(include=['object']).columns.tolist()
             num_cols = x.select_dtypes(include=['int64', 'float64']).columns.tolist()
+           
             
             # Define preprocessing steps
             num_transformer = Pipeline(steps=[
