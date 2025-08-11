@@ -7,4 +7,5 @@ seaborn
 dill
 gunicorn
 flask
+flask-cors
 -e.
