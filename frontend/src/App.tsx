@@ -264,9 +264,9 @@ function App() {
       const response = await fetch('https://personality-predictor-ezbd.onrender.com', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: body.toString(),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
