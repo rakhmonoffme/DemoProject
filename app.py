@@ -44,7 +44,7 @@ def predict_datapoint():
             
             pred_df = data.get_data_as_dataframe()
             predict_pipeline = PredictPipeline()
-            results_01 = predict_pipeline.predict(pred_df)
+            results_01 = predict_pipeline.predict(pred_df).astype(np.int64)
             logger.info("Prediction results: %s", results_01)
             
             label_encoder = load_object('artifacts/label_encoder.pkl')
