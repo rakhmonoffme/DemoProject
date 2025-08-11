@@ -17,11 +17,10 @@ from src.logger import setup_logger
 application = Flask(__name__)
 app = application
 
-# Allow CORS for React frontend
+# Allow CORS for React frontend (no trailing slash in origin)
 CORS(app, origins=["https://personality-prediction-ten.vercel.app"])
 
-
-@app.route('/')
+@app.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Flask backend is running"})
 
@@ -31,17 +30,19 @@ def predict_datapoint():
     logger.info("Predict route accessed via POST")
 
     try:
-        # Accept form data (React sends x-www-form-urlencoded)
-        form_data = request.form
+        # Accept JSON data from frontend
+        json_data = request.get_json()
+        if not json_data:
+            return jsonify({"error": "No JSON received"}), 400
 
         data = CustomData(
-            Time_spent_Alone=float(form_data.get('time_alone', 0)),
-            Stage_fear=float(form_data.get('stage_fear', 0)),
-            Social_event_attendance=float(form_data.get('social_events', 0)),
-            Going_outside=float(form_data.get('going_outside', 0)),
-            Drained_after_socializing=float(form_data.get('drained_after_socializing', 0)),
-            Friends_circle_size=float(form_data.get('friends_circle', 0)),
-            Post_frequency=int(form_data.get('post_frequency', 0))
+            Time_spent_Alone=float(json_data.get('time_alone', 0)),
+            Stage_fear=float(json_data.get('stage_fear', 0)),
+            Social_event_attendance=float(json_data.get('social_events', 0)),
+            Going_outside=float(json_data.get('going_outside', 0)),
+            Drained_after_socializing=float(json_data.get('drained_after_socializing', 0)),
+            Friends_circle_size=float(json_data.get('friends_circle', 0)),
+            Post_frequency=int(json_data.get('post_frequency', 0))
         )
 
         pred_df = data.get_data_as_dataframe()
@@ -57,7 +58,6 @@ def predict_datapoint():
     except Exception as e:
         logger.error(f"Error during prediction: {e}")
         return jsonify({"error": str(e)}), 400
-
 
 if __name__ == "__main__":
     print("Starting Flask app...")
