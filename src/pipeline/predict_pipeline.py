@@ -44,6 +44,7 @@ class CustomData:
         self.Going_outside = Going_outside
         self.Drained_after_socializing = Drained_after_socializing
         self.Friends_circle_size = Friends_circle_size
+        self.Post_frequency = Post_frequency
         
     def get_data_as_dataframe(self):
         try:
@@ -53,7 +54,8 @@ class CustomData:
                 "Social_event_attendance": [self.Social_event_attendance],
                 "Going_outside": [self.Going_outside],
                 "Drained_after_socializing": [self.Drained_after_socializing],
-                "Friends_circle_size": [self.Friends_circle_size]
+                "Friends_circle_size": [self.Friends_circle_size],
+                "Post_frequency": [self.Post_frequency]
             }
             return pd.DataFrame(data_dict)
         except Exception as e:
