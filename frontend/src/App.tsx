@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Languages, User, Brain, Send, Loader2 } from 'lucide-react';
+import { Languages, Send, Loader2 } from 'lucide-react';
 
 // Type definitions for better type safety
 interface FormData {
@@ -52,8 +52,10 @@ interface Translations {
       title: string;
       extrovert: string;
       introvert: string;
+      ambivert: string;
       extrovert_desc: string;
       introvert_desc: string;
+      ambivert_desc: string;
     };
     loading: string;
     error: string;
@@ -97,19 +99,21 @@ interface Translations {
       title: string;
       extrovert: string;
       introvert: string;
+      ambivert: string;
       extrovert_desc: string;
       introvert_desc: string;
+      ambivert_desc: string;
     };
     loading: string;
     error: string;
   };
 }
 
-// Translation object with English and Korean text
+// Translation object with English and Korean text - Enhanced with ambivert support
 const translations: Translations = {
   en: {
     title: "🧠 Personality Predictor",
-    subtitle: "Discover whether you're an Extrovert or Introvert based on your social patterns",
+    subtitle: "Discover whether you're an Extrovert, Introvert, or Ambivert based on your social patterns",
     inputs: {
       time_alone: "⏰ Time Spent Alone",
       stage_fear: "🎭 Stage Fear Level",
@@ -132,7 +136,7 @@ const translations: Translations = {
       stage_fear: "1 = No fear, 10 = Extreme fear",
       social_events: "1 = Rarely attend, 10 = Always attend",
       going_outside: "1 = Rarely go out, 10 = Always outside",
-      post_frequency: "Posts per week (0-50)",
+      post_frequency: "Posts per month (0-50)",
       friends_circle: "Number of close friends"
     },
     options: {
@@ -144,17 +148,19 @@ const translations: Translations = {
     languageToggle: "한국어",
     results: {
       title: "Your Personality Type:",
-      extrovert: "Extrovert",
-      introvert: "Introvert",
+      extrovert: "Extrovert 🦁",
+      introvert: "Introvert 🦉",
+      ambivert: "Ambivert 🐼",
       extrovert_desc: "You tend to gain energy from social interactions and external stimulation. You're outgoing, sociable, and thrive in group settings!",
-      introvert_desc: "You tend to gain energy from solitude and internal reflection. You prefer deep, meaningful conversations and smaller social circles!"
+      introvert_desc: "You tend to gain energy from solitude and internal reflection. You prefer deep, meaningful conversations and smaller social circles!",
+      ambivert_desc: "You balance both introverted and extroverted tendencies. You're adaptable and can thrive in various social situations!"
     },
     loading: "Analyzing...",
     error: "Error occurred. Please try again."
   },
   ko: {
     title: "🧠 성격 예측기",
-    subtitle: "당신의 사회적 패턴을 바탕으로 외향적인지 내향적인지 알아보세요",
+    subtitle: "당신의 사회적 패턴을 바탕으로 외향적, 내향적, 양향적 성격을 알아보세요",
     inputs: {
       time_alone: "⏰ 혼자 보내는 시간",
       stage_fear: "🎭 무대 공포 수준",
@@ -177,7 +183,7 @@ const translations: Translations = {
       stage_fear: "1 = 무서움 없음, 10 = 극심한 무서움",
       social_events: "1 = 거의 참석하지 않음, 10 = 항상 참석",
       going_outside: "1 = 거의 외출하지 않음, 10 = 항상 외출",
-      post_frequency: "주당 게시물 수 (0-50)",
+      post_frequency: "월별 게시물 수 (0-50)",
       friends_circle: "가까운 친구의 수"
     },
     options: {
@@ -189,10 +195,12 @@ const translations: Translations = {
     languageToggle: "English",
     results: {
       title: "당신의 성격 유형:",
-      extrovert: "외향적",
-      introvert: "내향적",
+      extrovert: "외향형 🦁",
+      introvert: "내향형 🦉",
+      ambivert: "양향형 🐼",
       extrovert_desc: "당신은 사회적 상호작용과 외부 자극으로부터 에너지를 얻는 경향이 있습니다. 당신은 외향적이고 사교적이며 그룹 환경에서 번영합니다!",
-      introvert_desc: "당신은 고독과 내적 성찰로부터 에너지를 얻는 경향이 있습니다. 당신은 깊고 의미 있는 대화와 더 작은 사회적 관계를 선호합니다!"
+      introvert_desc: "당신은 고독과 내적 성찰로부터 에너지를 얻는 경향이 있습니다. 당신은 깊고 의미 있는 대화와 더 작은 사회적 관계를 선호합니다!",
+      ambivert_desc: "당신은 내향성과 외향성을 모두 균형 있게 가지고 있습니다. 다양한 사회적 상황에 적응력이 뛰어나고 번영할 수 있습니다!"
     },
     loading: "분석 중...",
     error: "오류가 발생했습니다. 다시 시도해주세요."
@@ -231,9 +239,8 @@ function App() {
     }));
   };
 
-  // Handle form submission - sends data to backend API
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handle form submission - sends data to AI model backend
+  const handleSubmit = async () => {
     
     // Reset previous results and errors
     setError(null);
@@ -241,29 +248,40 @@ function App() {
     setLoading(true);
 
     try {
-      // API call to backend - replace with actual endpoint
-      const response = await fetch('/predict', {
+      // Create URLSearchParams body as per your AI model API
+      const body = new URLSearchParams();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === 'drained_after_socializing') {
+          // Convert yes/no to 1.0/0.0 for AI model
+          const drainedValue = value.toLowerCase() === 'yes' ? '1.0' : '0.0';
+          body.append(key, drainedValue);
+        } else {
+          body.append(key, value.toString());
+        }
+      });
+
+      // API call to your AI model backend
+      const response = await fetch('https://personality-predictor-ezbd.onrender.com', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: JSON.stringify(formData),
+        body: body.toString(),
       });
 
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error(`Server error: ${response.statusText}`);
       }
 
       const data = await response.json();
       
-      // Assume backend returns { personality: 'Extrovert' | 'Introvert' }
-      setResult(data.personality);
+      // Handle the prediction result from your AI model
+      const prediction = data.prediction || data.personality || 'Unknown';
+      setResult(prediction);
       
-    } catch (err) {
-      // For demo purposes, simulate a random result when API fails
-      console.log('API call failed, showing demo result');
-      const demoResult = Math.random() > 0.5 ? 'Extrovert' : 'Introvert';
-      setResult(demoResult);
+    } catch (err: any) {
+      setError(err.message || 'An error occurred while predicting personality');
+      console.error('Prediction error:', err);
     } finally {
       setLoading(false);
     }
@@ -282,6 +300,40 @@ function App() {
     );
   };
 
+  // Get result display data based on prediction
+  const getResultDisplay = (prediction: string) => {
+    const predictionLower = prediction.toLowerCase();
+    if (predictionLower.includes('extrovert')) {
+      return {
+        emoji: '🦁',
+        title: t.results.extrovert,
+        description: t.results.extrovert_desc,
+        colorClass: 'from-orange-100 to-pink-100 border-orange-500'
+      };
+    } else if (predictionLower.includes('introvert')) {
+      return {
+        emoji: '🦉',
+        title: t.results.introvert,
+        description: t.results.introvert_desc,
+        colorClass: 'from-blue-100 to-purple-100 border-blue-500'
+      };
+    } else if (predictionLower.includes('ambivert')) {
+      return {
+        emoji: '🐼',
+        title: t.results.ambivert,
+        description: t.results.ambivert_desc,
+        colorClass: 'from-green-100 to-emerald-100 border-green-500'
+      };
+    } else {
+      return {
+        emoji: '🤔',
+        title: prediction,
+        description: 'Personality analysis complete.',
+        colorClass: 'from-gray-100 to-slate-100 border-gray-500'
+      };
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 relative overflow-hidden">
       {/* Animated background particles */}
@@ -290,6 +342,8 @@ function App() {
         <div className="absolute w-6 h-6 bg-white/5 rounded-full animate-pulse" style={{ top: '20%', right: '20%', animationDelay: '1s' }}></div>
         <div className="absolute w-3 h-3 bg-white/15 rounded-full animate-pulse" style={{ bottom: '30%', left: '15%', animationDelay: '2s' }}></div>
         <div className="absolute w-5 h-5 bg-white/8 rounded-full animate-pulse" style={{ bottom: '20%', right: '10%', animationDelay: '3s' }}></div>
+        <div className="absolute w-4 h-4 bg-white/12 rounded-full animate-pulse" style={{ top: '60%', left: '80%', animationDelay: '4s' }}></div>
+        <div className="absolute w-2 h-2 bg-white/20 rounded-full animate-pulse" style={{ top: '40%', right: '60%', animationDelay: '5s' }}></div>
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-4xl relative z-10">
@@ -331,7 +385,7 @@ function App() {
 
           {/* Form */}
           <div className="p-6 md:p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-6">
               {/* Form rows - responsive grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Time Alone */}
@@ -386,8 +440,7 @@ function App() {
                     value={formData.social_events || ''}
                     onChange={(e) => handleInputChange('social_events', parseInt(e.target.value) || 0)}
                     placeholder={t.placeholders.social_events}
-                    min="1"
-                    max="10"
+                    min="0"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-200"
                     required
                   />
@@ -427,7 +480,6 @@ function App() {
                     onChange={(e) => handleInputChange('post_frequency', parseInt(e.target.value) || 0)}
                     placeholder={t.placeholders.post_frequency}
                     min="0"
-                    max="50"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-colors duration-200"
                     required
                   />
@@ -466,14 +518,14 @@ function App() {
                   required
                 >
                   <option value="" disabled>{t.options.drained_select}</option>
-                  <option value="Yes">{t.options.drained_yes}</option>
-                  <option value="No">{t.options.drained_no}</option>
+                  <option value="yes">{t.options.drained_yes}</option>
+                  <option value="no">{t.options.drained_no}</option>
                 </select>
               </div>
 
               {/* Submit button */}
               <button
-                type="submit"
+                onClick={handleSubmit}
                 disabled={!isFormValid() || loading}
                 className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
@@ -486,28 +538,29 @@ function App() {
                   <span>{t.submitButton}</span>
                 )}
               </button>
-            </form>
+            </div>
           </div>
 
           {/* Result display */}
           {result && (
             <div className="mx-6 md:mx-8 mb-6 md:mb-8">
-              <div className={`rounded-xl p-6 text-center shadow-lg ${
-                result === 'Extrovert' 
-                  ? 'bg-gradient-to-r from-orange-100 to-pink-100 border-l-4 border-orange-500' 
-                  : 'bg-gradient-to-r from-blue-100 to-purple-100 border-l-4 border-blue-500'
-              }`}>
-                <div className="text-4xl mb-3">
-                  {result === 'Extrovert' ? '🎉' : '📚'}
-                </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{t.results.title}</h3>
-                <div className="text-2xl font-bold mb-4 text-gray-900">
-                  {result === 'Extrovert' ? t.results.extrovert : t.results.introvert}
-                </div>
-                <p className="text-gray-700 leading-relaxed">
-                  {result === 'Extrovert' ? t.results.extrovert_desc : t.results.introvert_desc}
-                </p>
-              </div>
+              {(() => {
+                const resultDisplay = getResultDisplay(result);
+                return (
+                  <div className={`rounded-xl p-6 text-center shadow-lg bg-gradient-to-r ${resultDisplay.colorClass} border-l-4`}>
+                    <div className="text-4xl mb-3">
+                      {resultDisplay.emoji}
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{t.results.title}</h3>
+                    <div className="text-2xl font-bold mb-4 text-gray-900">
+                      {resultDisplay.title}
+                    </div>
+                    <p className="text-gray-700 leading-relaxed">
+                      {resultDisplay.description}
+                    </p>
+                  </div>
+                );
+              })()}
             </div>
           )}
 
@@ -515,7 +568,7 @@ function App() {
           {error && (
             <div className="mx-6 md:mx-8 mb-6 md:mb-8">
               <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                <p className="text-red-800 font-medium">{t.error}</p>
+                <p className="text-red-800 font-medium">{error}</p>
               </div>
             </div>
           )}
