@@ -18,7 +18,7 @@ application = Flask(__name__)
 app = application
 
 # Allow CORS for React frontend
-CORS(app, resources={r"/predict": {"origins": "*"}})
+CORS(app, origins=["https://your-vercel-domain.vercel.app"])
 
 @app.route('/')
 def home():
