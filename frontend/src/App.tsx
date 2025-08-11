@@ -249,16 +249,15 @@ function App() {
 
     try {
       // Create URLSearchParams body as per your AI model API
-      const body = new URLSearchParams();
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'drained_after_socializing') {
-          // Convert yes/no to 1.0/0.0 for AI model
-          const drainedValue = value.toLowerCase() === 'yes' ? '1.0' : '0.0';
-          body.append(key, drainedValue);
-        } else {
-          body.append(key, value.toString());
-        }
-      });
+      const requestBody = {
+      time_alone: Number(n.time_alone),
+      stage_fear: Number(n.stage_fear),
+      social_events: Number(n.social_events),
+      going_outside: Number(n.going_outside),
+      post_frequency: Number(n.post_frequency),
+      friends_circle: Number(n.friends_circle),
+      drained_after_socializing: n.drained_after_socializing.toLowerCase() === "yes" ? 1.0 : 0.0,
+    };
 
       // API call to your AI model backend
       const response = await fetch('https://personality-predictor-ezbd.onrender.com/predict', {
