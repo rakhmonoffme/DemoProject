@@ -18,7 +18,7 @@ application = Flask(__name__)
 app = application
 
 # Allow CORS for React frontend (no trailing slash in origin)
-CORS(app, origins=["https://personality-prediction-ten.vercel.app"])
+CORS(app, resources={r"/*": {"origins": "https://personality-prediction-ten.vercel.app"}})
 
 @app.route("/", methods=["GET"])
 def home():
