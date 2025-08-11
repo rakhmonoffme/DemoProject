@@ -37,7 +37,8 @@ class CustomData:
                     Social_event_attendance: float,
                     Going_outside: float,
                     Drained_after_socializing: float,
-                    Friends_circle_size: float,):
+                    Friends_circle_size: float,
+                    Post_frequency: float):
         self.Time_spent_Alone = Time_spent_Alone
         self.Stage_fear = Stage_fear
         self.Social_event_attendance = Social_event_attendance
