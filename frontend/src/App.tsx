@@ -261,7 +261,7 @@ function App() {
       });
 
       // API call to your AI model backend
-      const response = await fetch('https://personality-predictor-ezbd.onrender.com', {
+      const response = await fetch('https://personality-predictor-ezbd.onrender.com/predict', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
